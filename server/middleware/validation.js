@@ -122,6 +122,33 @@ export const validateAccount = [
   handleValidationErrors,
 ];
 
+// Validation rules for partial account updates (only validates fields that are present)
+export const validateAccountPartial = [
+  body("name")
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Account name must be between 2 and 100 characters"),
+
+  body("accountId")
+    .optional()
+    .trim()
+    .isLength({ min: 3, max: 100 })
+    .withMessage("Account ID must be between 3 and 100 characters"),
+
+  body("accountType")
+    .optional()
+    .isIn(["Temporary", "Personal", "Business"])
+    .withMessage("Account type must be 'Temporary', 'Personal', or 'Business'"),
+
+  body("sharedAccounts")
+    .optional()
+    .isArray()
+    .withMessage("Shared accounts must be an array"),
+
+  handleValidationErrors,
+];
+
 // Validation rules for rights creation/update
 export const validateRights = [
   body("applicationId")
@@ -288,6 +315,7 @@ export default {
   validateUserLogin,
   validateApplication,
   validateAccount,
+  validateAccountPartial,
   validateRights,
   validateId,
   validatePagination,

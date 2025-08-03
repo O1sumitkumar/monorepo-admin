@@ -4,6 +4,7 @@ import {
   validateId,
   validatePagination,
   validateAccount,
+  validateAccountPartial,
   sanitizeInput,
 } from "../../middleware/validation.js";
 import accountsController from "../../controllers/accountsController.js";
@@ -33,12 +34,12 @@ router.post(
   accountsController.createAccount
 );
 
-// Update account (admin only)
+// Update account (admin only) - Use partial validation for updates
 router.put(
   "/:id",
   requireAdmin,
   validateId,
-  validateAccount,
+  validateAccountPartial,
   sanitizeInput,
   accountsController.updateAccount
 );

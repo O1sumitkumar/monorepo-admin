@@ -192,7 +192,7 @@ router.post("/", async (req, res) => {
 // Update account
 router.put("/:id", async (req, res) => {
   try {
-    const { name, accountId, accountType } = req.body;
+    const { name, accountId, accountType, sharedAccounts } = req.body;
 
     // Check if account exists
     const existing = await Account.findOne({ id: req.params.id });
@@ -217,6 +217,7 @@ router.put("/:id", async (req, res) => {
       ...(name && { name }),
       ...(accountId && { accountId }),
       ...(accountType && { accountType }),
+      ...(sharedAccounts !== undefined && { sharedAccounts }),
       updatedAt: new Date(),
     };
 

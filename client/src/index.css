@@ -1160,6 +1160,7 @@ body {
   margin: 0;
 }
 
+/* Status Badge Styles - Enhanced for rounded chips */
 .status-badge {
   display: inline-block;
   padding: var(--ms-spacing-xs) var(--ms-spacing-sm);
@@ -1188,6 +1189,75 @@ body {
 .status-badge.expiring {
   background: rgba(0, 120, 212, 0.1);
   color: var(--ms-info);
+}
+
+/* Enhanced Chip Badge Styles for Table Columns */
+.chip-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.2px;
+  border: 1px solid;
+  transition: all var(--ms-transition-normal);
+}
+
+.chip-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+/* Type-specific chip colors */
+.chip-type-business {
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(37, 99, 235);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.chip-type-personal {
+  background: rgba(147, 51, 234, 0.1);
+  color: rgb(126, 34, 206);
+  border-color: rgba(147, 51, 234, 0.2);
+}
+
+.chip-type-temporary {
+  background: rgba(251, 146, 60, 0.1);
+  color: rgb(234, 88, 12);
+  border-color: rgba(251, 146, 60, 0.2);
+}
+
+/* Status-specific chip colors */
+.chip-status-active {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(22, 163, 74);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.chip-status-inactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(220, 38, 38);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.chip-status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: rgb(217, 119, 6);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Shared accounts chip */
+.chip-shared {
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(37, 99, 235);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.chip-not-shared {
+  background: rgba(156, 163, 175, 0.1);
+  color: rgb(107, 114, 128);
+  border-color: rgba(156, 163, 175, 0.2);
 }
 
 .app-details,
@@ -1397,25 +1467,6 @@ body {
   background: var(--ms-bg-primary);
 }
 
-.user-checkbox {
-  display: flex;
-  align-items: center;
-  padding: var(--ms-spacing-xs) var(--ms-spacing-sm); /* Smaller */
-  border-bottom: 1px solid var(--ms-border-secondary);
-  cursor: pointer;
-  transition: all var(--ms-transition-normal);
-  font-size: var(--ms-font-size-sm);
-}
-
-.user-checkbox:hover {
-  background: var(--ms-bg-tertiary);
-}
-
-.user-checkbox input[type="checkbox"] {
-  margin-right: var(--ms-spacing-xs); /* Smaller */
-  width: auto;
-}
-
 /* Modal Footer - Compact */
 .modal-footer {
   display: flex;
@@ -1582,4 +1633,56 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ms-gray-70);
+}
+
+/* Permission chip styles */
+.permission-chip {
+  display: inline-block;
+  padding: 1px 6px;
+  margin-right: 2px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border: 1px solid;
+  transition: all var(--ms-transition-normal);
+  min-width: 40px;
+  text-align: center;
+}
+
+.permission-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-2);
+}
+
+/* Permission-specific colors */
+.permission-read {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(22, 163, 74);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.permission-write {
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(37, 99, 235);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.permission-admin {
+  background: rgba(147, 51, 234, 0.1);
+  color: rgb(126, 34, 206);
+  border-color: rgba(147, 51, 234, 0.2);
+}
+
+.permission-owner {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(220, 38, 38);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.permission-default {
+  background: rgba(156, 163, 175, 0.1);
+  color: rgb(107, 114, 128);
+  border-color: rgba(156, 163, 175, 0.2);
 }

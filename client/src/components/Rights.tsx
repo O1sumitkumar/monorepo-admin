@@ -397,13 +397,24 @@ const Rights = () => {
       header: "Permissions",
       cell: ({ row }) => {
         const permissions = row.getValue("permissions") as string[];
+        const getPermissionClass = (permission: string) => {
+          switch (permission.toLowerCase()) {
+            case "read":
+              return "permission-chip permission-read";
+            case "write":
+              return "permission-chip permission-write";
+            case "admin":
+              return "permission-chip permission-admin";
+            case "owner":
+              return "permission-chip permission-owner";
+            default:
+              return "permission-chip permission-default";
+          }
+        };
         return (
           <div className="flex flex-wrap gap-1">
             {permissions.map((permission) => (
-              <span
-                key={permission}
-                className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded"
-              >
+              <span key={permission} className={getPermissionClass(permission)}>
                 {permission}
               </span>
             ))}

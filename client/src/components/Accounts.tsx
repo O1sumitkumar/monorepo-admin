@@ -38,27 +38,59 @@ const Accounts = () => {
       try {
         setLoading(true);
         const response = await accountsAPI.getAll();
+        console.log("=== RAW API RESPONSE ===");
+        console.log("Response:", response);
+        console.log("Response.data:", response.data);
+
         // Handle new API response format: { success: true, data: [...], message: "..." }
         const accountsData = response.data.success
           ? response.data.data
           : response.data;
 
+        console.log("Accounts data:", accountsData);
+
         // Map to expected format
         const mappedAccounts = (
           Array.isArray(accountsData) ? accountsData : []
-        ).map((account: any) => ({
-          id: account.id,
-          name: account.name,
-          accountId: account.accountId,
-          email: account.email,
-          description: account.description,
-          accountType: account.accountType || "Personal",
-          status: account.status || "active",
-          sharedAccounts: account.sharedAccounts || [],
-          createdAt: account.createdAt,
-          updatedAt: account.updatedAt,
-        }));
+        ).map(
+          (account: {
+            id: string;
+            name: string;
+            accountId: string;
+            email?: string;
+            description?: string;
+            accountType?: string;
+            status?: string;
+            sharedAccounts?: string[];
+            createdAt: string;
+            updatedAt: string;
+          }) => {
+            console.log(
+              "Processing account:",
+              account.name,
+              "sharedAccounts:",
+              account.sharedAccounts
+            );
+            return {
+              id: account.id,
+              name: account.name,
+              accountId: account.accountId,
+              email: account.email,
+              description: account.description,
+              accountType:
+                (account.accountType as
+                  | "Personal"
+                  | "Temporary"
+                  | "Business") || "Personal",
+              status: (account.status as "active" | "inactive") || "active",
+              sharedAccounts: account.sharedAccounts || [],
+              createdAt: account.createdAt,
+              updatedAt: account.updatedAt,
+            };
+          }
+        );
 
+        console.log("Final mapped accounts:", mappedAccounts);
         setAccounts(mappedAccounts);
       } catch (error) {
         console.error("Failed to load accounts:", error);
@@ -191,31 +223,88 @@ const Accounts = () => {
   };
 
   const handleViewAccount = (account: Account) => {
+    console.log("=== OPENING SHARE MODAL ===");
+    console.log("Account:", account);
+    console.log("Account sharedAccounts:", account.sharedAccounts);
+    console.log("Available users:", availableUsers);
+
+    // Verify the account has sharedAccounts field
+    if (!account.sharedAccounts) {
+      console.warn("⚠️ Account missing sharedAccounts field:", account);
+    }
+
     setSelectedAccount(account);
     setSharingData({
-      sharedAccounts: account.sharedAccounts,
+      sharedAccounts: account.sharedAccounts || [],
     });
     setShowSharingModal(true);
   };
 
+  // Reset sharing data when modal opens
+  useEffect(() => {
+    if (showSharingModal && selectedAccount) {
+      console.log("=== MODAL OPENED ===");
+      console.log("Selected account:", selectedAccount);
+      console.log(
+        "Selected account sharedAccounts:",
+        selectedAccount.sharedAccounts
+      );
+      console.log("Current sharingData:", sharingData);
+
+      const initialSharedAccounts = selectedAccount.sharedAccounts || [];
+      console.log("Setting initial sharedAccounts:", initialSharedAccounts);
+
+      setSharingData({
+        sharedAccounts: initialSharedAccounts,
+      });
+    }
+  }, [showSharingModal, selectedAccount]);
+
   const handleShareAccount = async () => {
     if (!selectedAccount) return;
 
+    console.log("=== SHARING ACCOUNT ===");
+    console.log("Selected account:", selectedAccount);
+    console.log("Sharing data:", sharingData);
+    console.log("API call payload:", {
+      sharedAccounts: sharingData.sharedAccounts,
+    });
+
     try {
-      // For now, just update the local state
-      // In a real implementation, you would call the API
-      setAccounts((prev) =>
-        prev.map((acc) =>
-          acc.id === selectedAccount.id
-            ? { ...acc, sharedAccounts: sharingData.sharedAccounts }
-            : acc
-        )
-      );
-      toast.success("Account sharing updated successfully");
-      setShowSharingModal(false);
-      setSelectedAccount(null);
+      // Call the API to update account sharing
+      const response = await accountsAPI.update(selectedAccount.id, {
+        sharedAccounts: sharingData.sharedAccounts,
+      });
+
+      console.log("API response:", response);
+      console.log("Response data:", response.data);
+
+      if (response.data.success) {
+        // Update local state with the response from API
+        setAccounts((prev) =>
+          prev.map((acc) =>
+            acc.id === selectedAccount.id
+              ? { ...acc, sharedAccounts: sharingData.sharedAccounts }
+              : acc
+          )
+        );
+        toast.success("Account sharing updated successfully");
+        setShowSharingModal(false);
+        setSelectedAccount(null);
+      } else {
+        console.error("API returned success: false");
+        console.error("API error:", response.data);
+        toast.error("Failed to update account sharing");
+      }
     } catch (error) {
-      console.error("Failed to update account sharing:", error);
+      console.error("=== SHARING ERROR ===");
+      console.error("Error object:", error);
+      const axiosError = error as {
+        response?: { data?: unknown; status?: number };
+      };
+      console.error("Error response:", axiosError.response);
+      console.error("Error data:", axiosError.response?.data);
+      console.error("Error status:", axiosError.response?.status);
       toast.error("Failed to update account sharing");
     }
   };
@@ -259,29 +348,39 @@ const Accounts = () => {
       header: "Type",
       cell: ({ row }) => {
         const type = (row.getValue("accountType") as string) || "Personal";
-        return (
-          <span className="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
-            {type}
-          </span>
-        );
+        const getTypeClass = (type: string) => {
+          switch (type.toLowerCase()) {
+            case "business":
+              return "chip-badge chip-type-business";
+            case "personal":
+              return "chip-badge chip-type-personal";
+            case "temporary":
+              return "chip-badge chip-type-temporary";
+            default:
+              return "chip-badge chip-type-personal";
+          }
+        };
+        return <span className={getTypeClass(type)}>{type}</span>;
       },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as string;
-        return (
-          <span
-            className={`inline-block px-2 py-1 text-xs rounded ${
-              status === "active"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {status}
-          </span>
-        );
+        const status = (row.getValue("status") as string) || "active";
+        const getStatusClass = (status: string) => {
+          switch (status.toLowerCase()) {
+            case "active":
+              return "chip-badge chip-status-active";
+            case "inactive":
+              return "chip-badge chip-status-inactive";
+            case "pending":
+              return "chip-badge chip-status-pending";
+            default:
+              return "chip-badge chip-status-active";
+          }
+        };
+        return <span className={getStatusClass(status)}>{status}</span>;
       },
     },
     {
@@ -289,14 +388,17 @@ const Accounts = () => {
       header: "Shared With",
       cell: ({ row }) => {
         const sharedWith = row.getValue("sharedAccounts") as string[];
+
         return (
           <div className="text-sm text-gray-500">
             {sharedWith.length > 0 ? (
-              <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 rounded">
                 {sharedWith.length} user{sharedWith.length !== 1 ? "s" : ""}
               </span>
             ) : (
-              <span className="text-gray-400">Not shared</span>
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200 rounded">
+                Not shared
+              </span>
             )}
           </div>
         );
@@ -318,6 +420,36 @@ const Accounts = () => {
         <div className="header-left">
           <h1>Accounts</h1>
           <p>Manage user accounts and sharing permissions</p>
+        </div>
+        <div className="header-actions">
+          <button
+            className="refresh-btn"
+            onClick={() => {
+              console.log("Current accounts state:", accounts);
+              console.log("Available users:", availableUsers);
+            }}
+            style={{ marginRight: "10px" }}
+          >
+            Debug Info
+          </button>
+          <button
+            className="refresh-btn"
+            onClick={() => {
+              // Test with the first account that has sharing data
+              const testAccount = accounts.find(
+                (acc) => acc.sharedAccounts && acc.sharedAccounts.length > 0
+              );
+              if (testAccount) {
+                console.log("Testing share modal with:", testAccount);
+                handleViewAccount(testAccount);
+              } else {
+                console.log("No accounts with sharing data found");
+              }
+            }}
+            style={{ marginRight: "10px" }}
+          >
+            Test Share Modal
+          </button>
         </div>
       </div>
 
@@ -466,7 +598,7 @@ const Accounts = () => {
       {/* Sharing Modal */}
       {showSharingModal && selectedAccount && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal" key={`share-modal-${selectedAccount.id}`}>
             <div className="modal-header">
               <h2>Share Account: {selectedAccount.name}</h2>
               <button
@@ -483,17 +615,76 @@ const Accounts = () => {
               <div className="form-group">
                 <label>Share with Users</label>
                 <div className="users-list">
-                  {availableUsers.map((user) => (
-                    <label key={user.id} className="user-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={sharingData.sharedAccounts.includes(user.id)}
-                        onChange={() => handleUserToggle(user.id)}
-                      />
-                      {user.name}
-                    </label>
-                  ))}
+                  {availableUsers.map((user) => {
+                    const isShared = sharingData.sharedAccounts.includes(
+                      user.id
+                    );
+                    console.log(`🔍 Checkbox for ${user.name} (${user.id}):`);
+                    console.log(
+                      `  - sharingData.sharedAccounts:`,
+                      sharingData.sharedAccounts
+                    );
+                    console.log(`  - user.id: ${user.id}`);
+                    console.log(
+                      `  - includes check: ${sharingData.sharedAccounts.includes(
+                        user.id
+                      )}`
+                    );
+                    console.log(`  - isShared: ${isShared}`);
+                    return (
+                      <label key={user.id} className="user-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={isShared}
+                          onChange={() => handleUserToggle(user.id)}
+                        />
+                        <span style={{ marginLeft: "8px" }}>
+                          {user.name}{" "}
+                          {isShared && (
+                            <span
+                              style={{ color: "green", fontWeight: "bold" }}
+                            >
+                              ✓
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                    );
+                  })}
                 </div>
+                <div
+                  style={{ marginTop: "10px", fontSize: "12px", color: "#666" }}
+                >
+                  Currently shared with: {sharingData.sharedAccounts.length}{" "}
+                  user(s)
+                </div>
+                {selectedAccount && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      padding: "8px",
+                      backgroundColor: "#f0f8ff",
+                      borderRadius: "4px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <strong>Summary:</strong> This account will be shared with{" "}
+                    {sharingData.sharedAccounts.length} user(s)
+                    {sharingData.sharedAccounts.length > 0 && (
+                      <div style={{ marginTop: "4px" }}>
+                        Users:{" "}
+                        {sharingData.sharedAccounts
+                          .map((userId) => {
+                            const user = availableUsers.find(
+                              (u) => u.id === userId
+                            );
+                            return user ? user.name : userId;
+                          })
+                          .join(", ")}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
             <div className="modal-footer">
