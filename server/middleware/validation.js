@@ -34,6 +34,36 @@ const isValidObjectId = (value) => {
   return isValid;
 };
 
+// Validation rules for admin signup
+export const validateAdminSignup = [
+  body("username")
+    .trim()
+    .isLength({ min: 4, max: 30 })
+    .withMessage("Username must be between 4 and 30 characters")
+    .matches(/^[a-zA-Z0-9_]+$/)
+    .withMessage("Username can only contain letters, numbers, and underscores"),
+
+  body("email")
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("Please provide a valid email address"),
+
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/)
+    .withMessage(
+      "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)"
+    ),
+
+  body("adminCode")
+    .trim()
+    .notEmpty()
+    .withMessage("Admin signup code is required"),
+
+  handleValidationErrors,
+];
+
 // Validation rules for user registration
 export const validateUserRegistration = [
   body("username")

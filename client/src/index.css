@@ -1686,3 +1686,40 @@ body {
   color: rgb(107, 114, 128);
   border-color: rgba(156, 163, 175, 0.2);
 }
+
+/* Dashboard refresh button */
+.dashboard-refresh-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--ms-spacing-xs) var(--ms-spacing-md);
+  background-color: var(--ms-bg-primary);
+  color: var(--ms-text-secondary);
+  border: 1px solid var(--ms-border-primary);
+  border-radius: var(--ms-radius-md);
+  font-size: var(--ms-font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-family: inherit;
+  box-shadow: var(--ms-shadow-2);
+  height: 32px;
+  gap: var(--ms-spacing-xs);
+}
+
+.dashboard-refresh-btn:hover {
+  background-color: var(--ms-bg-tertiary);
+  color: var(--ms-primary);
+  border-color: var(--ms-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.dashboard-refresh-btn svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--ms-transition-normal);
+}
+
+.dashboard-refresh-btn:hover svg {
+  transform: rotate(180deg);
+}

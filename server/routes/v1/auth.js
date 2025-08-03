@@ -4,11 +4,103 @@ import { authV1, generateTokenV1 } from "../../middleware/auth-v1.js";
 import {
   validateUserLogin,
   validateUserRegistration,
+  validateAdminSignup,
 } from "../../middleware/validation.js";
 import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
+import Account from "../../models/Account.js"; // Added import for Account
 
 const router = express.Router();
+
+// Admin signup endpoint
+router.post("/admin-signup", validateAdminSignup, async (req, res) => {
+  try {
+    const { username, email, password, adminCode } = req.body;
+
+    // Verify admin code (you can set this in environment variables)
+    const validAdminCode = process.env.ADMIN_SIGNUP_CODE || "ADMIN2024";
+    if (adminCode !== validAdminCode) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid admin signup code",
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      $or: [{ username }, { email }],
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Username or email already exists",
+      });
+    }
+
+    // Find or create a default account for admin users
+    let defaultAccount = await Account.findOne({ accountType: "Business" });
+    if (!defaultAccount) {
+      // Create a default admin account if none exists
+      defaultAccount = new Account({
+        id: "admin-account",
+        name: "System Administrator",
+        accountId: "admin-account-001",
+        email: "admin@system.com",
+        description: "Default account for system administrators",
+        accountType: "Business",
+        status: "active",
+        sharedAccounts: [],
+      });
+      await defaultAccount.save();
+    }
+
+    // Hash password
+    const saltRounds = 12; // Higher salt rounds for admin accounts
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create new admin user
+    const user = new User({
+      username,
+      email,
+      password: hashedPassword,
+      role: "admin",
+      status: "active",
+      accountId: defaultAccount._id, // Assign to default account
+    });
+
+    await user.save();
+
+    // Generate token
+    const token = generateTokenV1(user._id);
+
+    console.log(`✅ [ADMIN SIGNUP] New admin user created: ${username}`);
+
+    // Return success response
+    res.status(201).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          accountId: user.accountId,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+        token,
+      },
+      message: "Admin user created successfully",
+    });
+  } catch (error) {
+    console.error("❌ [ADMIN SIGNUP] Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
 
 // Simple test endpoint (no database)
 router.post("/test-simple", async (req, res) => {
