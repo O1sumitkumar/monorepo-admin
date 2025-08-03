@@ -1,0 +1,650 @@
+/* DataTable Styles - Microsoft Fluent Design Compact */
+.data-table-container {
+  background: var(--ms-bg-primary);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-4);
+  border: 1px solid var(--ms-border-primary);
+  overflow: hidden;
+  font-size: 12px; /* Even smaller base font size */
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px; /* Much smaller padding */
+  border-bottom: 1px solid var(--ms-border-secondary);
+  background: #ffffff; /* White background */
+  min-height: 36px; /* Much smaller height */
+}
+
+.table-search {
+  flex: 1;
+  max-width: 280px; /* Smaller search width */
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Consistent icon sizing - All icons same size */
+.search-icon {
+  position: absolute;
+  left: 6px;
+  color: var(--ms-text-secondary);
+  z-index: 1;
+  width: 16px; /* Standard icon size */
+  height: 16px; /* Standard icon size */
+}
+
+.search-input {
+  width: 100%;
+  padding: 4px 8px 4px 24px; /* Much smaller padding */
+  border: 1px solid var(--ms-border-primary);
+  border-radius: var(--ms-radius-md);
+  font-size: 12px; /* Smaller font */
+  font-family: inherit;
+  transition: all var(--ms-transition-normal);
+  background: var(--ms-bg-primary);
+  color: var(--ms-text-primary);
+  height: 28px; /* Much smaller height */
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--ms-primary);
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px; /* Much smaller padding */
+  background-color: var(--ms-primary);
+  color: var(--ms-white);
+  border: none;
+  border-radius: var(--ms-radius-md);
+  font-size: 12px; /* Smaller font */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-family: inherit;
+  gap: 4px; /* Smaller gap */
+  height: 28px; /* Much smaller height */
+}
+
+.add-button:hover {
+  background-color: var(--ms-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  min-height: calc(
+    24px * 15 + 24px + 36px + 36px
+  ); /* 15 rows + header + pagination + table header */
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px; /* Smaller base font */
+}
+
+.table-header-cell {
+  background: #ffffff; /* White background */
+  padding: 4px 8px; /* Much smaller padding */
+  text-align: left;
+  font-weight: 700; /* Bold header text */
+  color: var(--ms-text-primary);
+  font-size: 11px; /* Smaller header font */
+  border-bottom: 1px solid var(--ms-border-primary);
+  height: 24px; /* More compact header height */
+  white-space: nowrap;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px; /* Smaller gap */
+}
+
+.header-content.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.header-content.sortable:hover {
+  color: var(--ms-primary);
+}
+
+.sort-icon {
+  color: var(--ms-text-secondary);
+  transition: all var(--ms-transition-normal);
+  width: 16px; /* Standard icon size */
+  height: 16px; /* Standard icon size */
+}
+
+.header-content.sortable:hover .sort-icon {
+  color: var(--ms-primary);
+}
+
+.table-row {
+  transition: all var(--ms-transition-normal);
+  height: 24px; /* More compact row height */
+}
+
+.table-row:hover {
+  background: var(--ms-bg-tertiary);
+}
+
+.table-cell {
+  padding: 2px 8px; /* Much smaller padding */
+  border-bottom: 1px solid var(--ms-border-secondary);
+  font-size: 12px; /* Smaller font */
+  color: var(--ms-text-primary);
+  vertical-align: middle;
+  height: 24px; /* More compact cell height */
+}
+
+.actions-cell {
+  width: 100px; /* Increased width for better spacing */
+  text-align: center;
+  padding: 4px 8px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-direction: row;
+}
+
+/* Action button icons */
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--ms-radius-sm);
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-family: inherit;
+  position: relative;
+}
+
+.action-btn svg {
+  width: 16px; /* Standard icon size */
+  height: 16px; /* Standard icon size */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.action-btn.view-btn {
+  background: var(--ms-bg-tertiary);
+  color: var(--ms-text-secondary);
+  border: 1px solid var(--ms-border-primary);
+}
+
+.action-btn.view-btn:hover {
+  background: var(--ms-primary);
+  color: var(--ms-white);
+  border-color: var(--ms-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.action-btn.edit-btn {
+  background: var(--ms-primary);
+  color: var(--ms-white);
+  border: 1px solid var(--ms-primary);
+}
+
+.action-btn.edit-btn:hover {
+  background: var(--ms-primary-hover);
+  border-color: var(--ms-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.action-btn.delete-btn {
+  background: var(--ms-error);
+  color: var(--ms-white);
+  border: 1px solid var(--ms-error);
+}
+
+.action-btn.delete-btn:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.no-data {
+  text-align: center;
+  padding: 24px 12px; /* Smaller padding */
+  color: var(--ms-text-secondary);
+  font-style: italic;
+  font-size: 12px; /* Smaller font */
+}
+
+.table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px; /* Much smaller padding */
+  border-top: 1px solid var(--ms-border-secondary);
+  background: #ffffff; /* White background */
+  min-height: 36px; /* Much smaller height */
+}
+
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* Much smaller gap */
+  font-size: 11px; /* Smaller font */
+  color: var(--ms-text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Smaller gap */
+}
+
+.pagination-btn {
+  padding: 3px 6px; /* Much smaller padding */
+  border: 1px solid var(--ms-border-primary);
+  border-radius: var(--ms-radius-md);
+  background: var(--ms-bg-primary);
+  color: var(--ms-text-primary);
+  font-size: 11px; /* Smaller font */
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-family: inherit;
+  height: 24px; /* Much smaller height */
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--ms-bg-tertiary);
+  border-color: var(--ms-primary);
+  color: var(--ms-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 1px; /* Much smaller gap */
+}
+
+.page-btn {
+  width: 24px; /* Smaller button */
+  height: 24px; /* Smaller button */
+  border: 1px solid var(--ms-border-primary);
+  border-radius: var(--ms-radius-sm);
+  background: var(--ms-bg-primary);
+  color: var(--ms-text-primary);
+  font-size: 11px; /* Smaller font */
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-btn:hover {
+  background: var(--ms-bg-tertiary);
+  border-color: var(--ms-primary);
+  color: var(--ms-primary);
+}
+
+.page-btn.active {
+  background: var(--ms-primary);
+  color: var(--ms-white);
+  border-color: var(--ms-primary);
+}
+
+/* Status Badge Styles for Tables - Compact */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 4px; /* Much smaller padding */
+  border-radius: var(--ms-radius-sm);
+  font-size: 10px; /* Smaller font */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px; /* Smaller letter spacing */
+  white-space: nowrap;
+}
+
+.status-badge.active {
+  background: rgba(16, 124, 16, 0.1);
+  color: var(--ms-success);
+}
+
+.status-badge.inactive {
+  background: rgba(209, 52, 56, 0.1);
+  color: var(--ms-error);
+}
+
+.status-badge.expired {
+  background: rgba(255, 140, 0, 0.1);
+  color: var(--ms-warning);
+}
+
+.status-badge.expiring {
+  background: rgba(0, 120, 212, 0.1);
+  color: var(--ms-info);
+}
+
+/* Compact cell content */
+.table-cell .font-medium {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.table-cell .text-sm {
+  font-size: 11px;
+}
+
+.table-cell .text-xs {
+  font-size: 10px;
+}
+
+.table-cell .text-gray-500 {
+  color: var(--ms-text-secondary);
+}
+
+/* Permission badges - compact */
+.inline-block.px-2.py-1.text-xs {
+  padding: 1px 4px;
+  font-size: 10px;
+  border-radius: 2px;
+}
+
+/* Responsive Table - Compact */
+@media (max-width: 768px) {
+  .table-header {
+    flex-direction: column;
+    gap: 6px; /* Smaller gap */
+    align-items: stretch;
+    padding: 6px 8px; /* Much smaller padding */
+  }
+
+  .table-search {
+    max-width: none;
+  }
+
+  .table-pagination {
+    flex-direction: column;
+    gap: 6px; /* Smaller gap */
+    padding: 6px 8px; /* Much smaller padding */
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-numbers {
+    order: -1;
+  }
+
+  .data-table {
+    font-size: 11px; /* Even smaller on mobile */
+  }
+
+  .table-cell {
+    padding: 3px 6px; /* Much smaller padding on mobile */
+  }
+}
+
+/* Compact scrollbar */
+.table-wrapper::-webkit-scrollbar {
+  width: 4px; /* Smaller scrollbar */
+  height: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--ms-bg-secondary);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--ms-gray-60);
+  border-radius: 2px; /* Smaller radius */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--ms-gray-70);
+}
+
+/* Compact loading state */
+.loading-spinner {
+  padding: 12px; /* Smaller padding */
+}
+
+.spinner {
+  width: 20px; /* Smaller spinner */
+  height: 20px;
+  border: 2px solid var(--ms-border-primary);
+  border-top: 2px solid var(--ms-primary);
+}
+
+/* Compact modal for table actions */
+.modal {
+  max-width: 450px; /* Smaller modal */
+}
+
+.modal-header {
+  padding: 12px 16px; /* Much smaller padding */
+}
+
+.modal-body {
+  padding: 12px 16px; /* Much smaller padding */
+}
+
+.modal-footer {
+  padding: 12px 16px; /* Much smaller padding */
+}
+
+/* Compact form elements in modals */
+.form-group {
+  margin-bottom: 8px; /* Much smaller margin */
+}
+
+.form-group label {
+  font-size: 11px; /* Smaller label */
+  margin-bottom: 2px; /* Much smaller margin */
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 4px 6px; /* Much smaller padding */
+  font-size: 12px; /* Smaller font */
+  height: 28px; /* Much smaller height */
+}
+
+/* Compact buttons in modals */
+.modal-footer .cancel-btn,
+.modal-footer .save-btn {
+  padding: 4px 8px; /* Much smaller padding */
+  font-size: 12px; /* Smaller font */
+  height: 28px; /* Much smaller height */
+}
+
+/* Permissions grid styling - Modern Chips */
+.permissions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.permission-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border: 2px solid var(--ms-border-primary);
+  border-radius: 20px;
+  background: var(--ms-bg-primary);
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ms-text-primary);
+  min-width: 60px;
+  position: relative;
+  user-select: none;
+}
+
+.permission-checkbox:hover {
+  background: var(--ms-bg-tertiary);
+  border-color: var(--ms-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.permission-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.permission-checkbox input[type="checkbox"]:checked + span {
+  color: var(--ms-white);
+  font-weight: 600;
+}
+
+.permission-checkbox input[type="checkbox"]:checked {
+  background-color: var(--ms-primary);
+  border-color: var(--ms-primary);
+}
+
+.permission-checkbox input[type="checkbox"]:checked ~ .permission-checkbox {
+  background: var(--ms-primary);
+  border-color: var(--ms-primary);
+  color: var(--ms-white);
+}
+
+.permission-checkbox:has(input[type="checkbox"]:checked) {
+  background: var(--ms-primary);
+  border-color: var(--ms-primary);
+  color: var(--ms-white);
+}
+
+.permission-checkbox span {
+  pointer-events: none;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Users list styling - Modern Chips */
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.user-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--ms-border-primary);
+  border-radius: var(--ms-radius-md);
+  background: var(--ms-bg-primary);
+  cursor: pointer;
+  transition: all var(--ms-transition-normal);
+  font-size: 13px;
+  font-weight: 500;
+  min-height: 40px;
+  position: relative;
+}
+
+.user-checkbox:hover {
+  background: var(--ms-bg-tertiary);
+  border-color: var(--ms-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--ms-shadow-4);
+}
+
+.user-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: var(--ms-primary);
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+}
+
+.user-checkbox input[type="checkbox"]:checked {
+  background-color: var(--ms-primary);
+  border-color: var(--ms-primary);
+}
+
+.user-checkbox input[type="checkbox"]:checked + span {
+  color: var(--ms-primary);
+  font-weight: 600;
+}
+
+.user-checkbox span {
+  flex: 1;
+  text-align: left;
+  line-height: 1.4;
+}
+
+/* Add button icon */
+.add-button svg {
+  width: 16px; /* Standard icon size */
+  height: 16px; /* Standard icon size */
+}
+
+/* Global icon sizing - Override all icons */
+svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Specific overrides only when absolutely necessary */
+.large-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.small-icon svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Ensure all Lucide icons are consistent */
+[data-lucide] {
+  width: 16px !important;
+  height: 16px !important;
+}

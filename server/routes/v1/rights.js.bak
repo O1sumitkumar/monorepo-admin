@@ -1,0 +1,10 @@
+import express from "express";
+
+const router = express.Router();
+
+// Get all rights with pagination and search (BASE ROUTE - must come first)
+router.get("/", (req, res) => {
+  res.json({ success: true, message: "Rights route working", path: req.path });
+});
+
+export default router;
