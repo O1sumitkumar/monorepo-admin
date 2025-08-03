@@ -81,20 +81,54 @@ class ApplicationService {
   // Create new application
   async createApplication(applicationData) {
     try {
-      // Check if application with same applicationId already exists
+      console.log(
+        "🔍 [APPLICATION SERVICE] Creating application with data:",
+        applicationData
+      );
+
+      // Validate required fields
+      if (!applicationData.name || !applicationData.applicationId) {
+        throw new AppError("Name and applicationId are required", 400);
+      }
+
+      // Check if application with this ID already exists
       const existingApplication = await Application.findOne({
         applicationId: applicationData.applicationId,
       });
 
       if (existingApplication) {
+        console.log(
+          "❌ [APPLICATION SERVICE] Application with ID already exists:",
+          applicationData.applicationId
+        );
         throw new AppError("Application with this ID already exists", 400);
       }
 
-      const application = new Application(applicationData);
-      await application.save();
+      console.log(
+        "✅ [APPLICATION SERVICE] Validation passed, creating application..."
+      );
 
-      return this.getApplicationById(application._id);
+      const application = new Application(applicationData);
+      console.log(
+        "✅ [APPLICATION SERVICE] Application instance created:",
+        application
+      );
+
+      await application.save();
+      console.log("✅ [APPLICATION SERVICE] Application saved successfully");
+
+      const result = await this.getApplicationById(application._id);
+      console.log(
+        "✅ [APPLICATION SERVICE] Returning created application:",
+        result
+      );
+
+      return result;
     } catch (error) {
+      console.error(
+        "❌ [APPLICATION SERVICE] Error creating application:",
+        error
+      );
       if (error instanceof AppError) throw error;
       throw new AppError("Failed to create application", 500);
     }

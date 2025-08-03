@@ -9,6 +9,16 @@ import automatedRightsRoutes from "./automatedRights.js";
 
 const router = express.Router();
 
+// Health check endpoint
+router.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is healthy",
+    timestamp: new Date().toISOString(),
+    version: "v1",
+  });
+});
+
 // Mount routes
 router.use("/auth", authRoutes);
 router.use("/applications", applicationsRoutes);

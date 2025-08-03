@@ -10,6 +10,86 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
+// Simple test endpoint (no database)
+router.post("/test-simple", async (req, res) => {
+  try {
+    console.log("🔍 [TEST SIMPLE] Request received");
+    console.log("🔍 [TEST SIMPLE] Body:", req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "Simple test successful",
+      body: req.body,
+    });
+  } catch (error) {
+    console.error("❌ [TEST SIMPLE] Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
+// Test login endpoint (without validation)
+router.post("/test-login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    console.log("🔍 [TEST LOGIN] Attempting login for:", username);
+
+    // Find user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      console.log("❌ [TEST LOGIN] User not found:", username);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    console.log("✅ [TEST LOGIN] User found:", user.username);
+
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    console.log("🔍 [TEST LOGIN] Password check result:", isValidPassword);
+
+    if (!isValidPassword) {
+      console.log("❌ [TEST LOGIN] Invalid password for user:", username);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // Generate token
+    const token = generateTokenV1(user._id);
+
+    console.log("✅ [TEST LOGIN] Login successful for:", username);
+
+    // Return success response
+    res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+        token,
+      },
+      message: "Login successful",
+    });
+  } catch (error) {
+    console.error("❌ [TEST LOGIN] Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 // Login endpoint
 router.post("/login", validateUserLogin, async (req, res) => {
   try {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import API_CONFIG from "../config/api.js";
 
 // Data Models matching backend
 export interface Application {
@@ -157,7 +158,7 @@ export interface LegacyVerifyResponse {
 }
 
 // Generic API Response Type
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -169,9 +170,9 @@ export interface ApiResponse<T = any> {
   };
 }
 
-// Create axios instance with proper base URL
+// Create axios instance with dynamic base URL from configuration
 const api = axios.create({
-  baseURL: import.meta.env.PROD ? "/api" : "/api", // Use proxy in development
+  baseURL: API_CONFIG.getBaseURL(),
   headers: {
     "Content-Type": "application/json",
   },
@@ -187,6 +188,7 @@ api.interceptors.request.use(
     }
     // Log the request URL for debugging
     console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    console.log(`🌐 API Version: ${API_CONFIG.getVersion()}`);
     return config;
   },
   (error) => {
@@ -216,77 +218,77 @@ api.interceptors.response.use(
   }
 );
 
-// Auth API - Updated to use v1 endpoints
+// Auth API - Uses centralized configuration
 export const authAPI = {
   login: (credentials: { username: string; password: string }) =>
-    api.post<AuthResponse>("/v1/auth/login", credentials),
+    api.post<AuthResponse>("/auth/login", credentials),
   register: (userData: {
     username: string;
     email: string;
     password: string;
     role?: string;
-  }) => api.post<AuthResponse>("/v1/auth/register", userData),
-  logout: () => api.post("/v1/auth/logout"),
+  }) => api.post<AuthResponse>("/auth/register", userData),
+  logout: () => api.post("/auth/logout"),
   verifyToken: (token: string) =>
-    api.post<VerifyResponse>("/v1/auth/verify", { token }),
-  getProfile: () => api.get<ProfileResponse>("/v1/auth/profile"),
+    api.post<VerifyResponse>("/auth/verify", { token }),
+  getProfile: () => api.get<ProfileResponse>("/auth/profile"),
   changePassword: (passwords: {
     currentPassword: string;
     newPassword: string;
-  }) => api.post("/v1/auth/change-password", passwords),
+  }) => api.post("/auth/change-password", passwords),
 };
 
-// Applications API - Updated to use v1 endpoints
+// Applications API - Uses centralized configuration
 export const applicationsAPI = {
-  getAll: (params?: any) =>
-    api.get<ApiResponse<Application[]>>("/v1/applications", { params }),
+  getAll: (params?: Record<string, unknown>) =>
+    api.get<ApiResponse<Application[]>>("/applications", { params }),
   getById: (id: string) =>
-    api.get<ApiResponse<Application>>(`/v1/applications/${id}`),
+    api.get<ApiResponse<Application>>(`/applications/${id}`),
   create: (data: Partial<Application>) =>
-    api.post<ApiResponse<Application>>("/v1/applications", data),
+    api.post<ApiResponse<Application>>("/applications", data),
   update: (id: string, data: Partial<Application>) =>
-    api.put<ApiResponse<Application>>(`/v1/applications/${id}`, data),
-  delete: (id: string) => api.delete<ApiResponse>(`/v1/applications/${id}`),
-  getStats: () => api.get<ApiResponse>("/v1/applications/stats/overview"),
+    api.put<ApiResponse<Application>>(`/applications/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse>(`/applications/${id}`),
+  getStats: () => api.get<ApiResponse>("/applications/stats/overview"),
   toggleStatus: (id: string) =>
-    api.patch<ApiResponse<Application>>(`/v1/applications/${id}/toggle-status`),
+    api.patch<ApiResponse<Application>>(`/applications/${id}/toggle-status`),
   getActive: () =>
-    api.get<ApiResponse<Application[]>>("/v1/applications/active/list"),
+    api.get<ApiResponse<Application[]>>("/applications/active/list"),
 };
 
-// Rights API - Updated to use v1 endpoints
+// Rights API - Uses centralized configuration
 export const rightsAPI = {
-  getAll: (params?: any) =>
-    api.get<ApiResponse<Rights[]>>("/v1/rights", { params }),
-  getById: (id: string) => api.get<ApiResponse<Rights>>(`/v1/rights/${id}`),
+  getAll: (params?: Record<string, unknown>) =>
+    api.get<ApiResponse<Rights[]>>("/rights", { params }),
+  getById: (id: string) => api.get<ApiResponse<Rights>>(`/rights/${id}`),
   create: (data: {
     applicationId: string;
     accountId: string;
     permissions: Permission[];
     expiresAt?: string;
-  }) => api.post<ApiResponse<Rights>>("/v1/rights", data),
+  }) => api.post<ApiResponse<Rights>>("/rights", data),
   update: (id: string, data: Partial<Rights>) =>
-    api.put<ApiResponse<Rights>>(`/v1/rights/${id}`, data),
-  delete: (id: string) => api.delete<ApiResponse>(`/v1/rights/${id}`),
-  getStats: () => api.get<ApiResponse>("/v1/rights/stats/overview"),
+    api.put<ApiResponse<Rights>>(`/rights/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse>(`/rights/${id}`),
+  getStats: () => api.get<ApiResponse>("/rights/stats/overview"),
   verify: (data: {
     applicationId: string;
     accountId: string;
     permissions: Permission[];
-  }) => api.post<ApiResponse>("/v1/rights/verify", data),
+  }) => api.post<ApiResponse>("/rights/verify", data),
 };
 
-// Accounts API - Updated to use v1 endpoints
+// Accounts API - Uses centralized configuration
 export const accountsAPI = {
-  getAll: (params?: any) =>
-    api.get<ApiResponse<Account[]>>("/v1/accounts", { params }),
-  getById: (id: string) => api.get<ApiResponse<Account>>(`/v1/accounts/${id}`),
+  getAll: (params?: Record<string, unknown>) =>
+    api.get<ApiResponse<Account[]>>("/accounts", { params }),
+  getById: (id: string) => api.get<ApiResponse<Account>>(`/accounts/${id}`),
   create: (data: Partial<Account>) =>
-    api.post<ApiResponse<Account>>("/v1/accounts", data),
+    api.post<ApiResponse<Account>>("/accounts", data),
   update: (id: string, data: Partial<Account>) =>
-    api.put<ApiResponse<Account>>(`/v1/accounts/${id}`, data),
-  delete: (id: string) => api.delete<ApiResponse>(`/v1/accounts/${id}`),
-  getStats: () => api.get<ApiResponse>("/v1/accounts/stats/overview"),
+    api.put<ApiResponse<Account>>(`/accounts/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse>(`/accounts/${id}`),
+  getStats: () => api.get<ApiResponse>("/accounts/stats/overview"),
   share: (
     id: string,
     data: {
@@ -294,80 +296,108 @@ export const accountsAPI = {
       permissions: Permission[];
       expiresAt?: string;
     }
-  ) => api.post<ApiResponse<AccountSharing>>(`/v1/accounts/${id}/share`, data),
+  ) => api.post<ApiResponse<AccountSharing>>(`/accounts/${id}/share`, data),
   updateSharing: (sharingId: string, data: Partial<AccountSharing>) =>
-    api.put<ApiResponse<AccountSharing>>(
-      `/v1/accounts/share/${sharingId}`,
-      data
-    ),
-  deleteSharing: (sharingId: string) =>
-    api.delete<ApiResponse>(`/v1/accounts/share/${sharingId}`),
+    api.put<ApiResponse<AccountSharing>>(`/accounts/share/${sharingId}`, data),
+  revokeSharing: (sharingId: string) =>
+    api.delete<ApiResponse>(`/accounts/share/${sharingId}`),
+  getSharing: (params?: Record<string, unknown>) =>
+    api.get<ApiResponse<AccountSharing[]>>("/account-sharing", { params }),
+  createSharing: (data: Partial<AccountSharing>) =>
+    api.post<ApiResponse<AccountSharing>>("/account-sharing", data),
+  updateSharingStatus: (id: string, status: string) =>
+    api.put<ApiResponse<AccountSharing>>(`/account-sharing/${id}`, { status }),
+  deleteSharing: (id: string) =>
+    api.delete<ApiResponse>(`/account-sharing/${id}`),
 };
 
-// Account Sharing API - New dedicated API for account sharing
+// Account Sharing API - Dedicated API for account sharing operations
 export const accountSharingAPI = {
-  getAll: (params?: any) =>
-    api.get<ApiResponse<AccountSharing[]>>("/v1/account-sharing", { params }),
+  getAll: (params?: Record<string, unknown>) =>
+    api.get<ApiResponse<AccountSharing[]>>("/account-sharing", { params }),
   getById: (id: string) =>
-    api.get<ApiResponse<AccountSharing>>(`/v1/account-sharing/${id}`),
+    api.get<ApiResponse<AccountSharing>>(`/account-sharing/${id}`),
   create: (data: {
     sourceAccountId: string;
     targetAccountId: string;
     invitedBy: string;
     expiresAt?: string;
-  }) => api.post<ApiResponse<AccountSharing>>("/v1/account-sharing", data),
+  }) => api.post<ApiResponse<AccountSharing>>("/account-sharing", data),
   update: (id: string, data: Partial<AccountSharing>) =>
-    api.put<ApiResponse<AccountSharing>>(`/v1/account-sharing/${id}`, data),
-  delete: (id: string) => api.delete<ApiResponse>(`/v1/account-sharing/${id}`),
+    api.put<ApiResponse<AccountSharing>>(`/account-sharing/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse>(`/account-sharing/${id}`),
   activate: (id: string) =>
-    api.patch<ApiResponse<AccountSharing>>(
-      `/v1/account-sharing/${id}/activate`
-    ),
+    api.patch<ApiResponse<AccountSharing>>(`/account-sharing/${id}/activate`),
   revoke: (id: string) =>
-    api.patch<ApiResponse<AccountSharing>>(`/v1/account-sharing/${id}/revoke`),
+    api.patch<ApiResponse<AccountSharing>>(`/account-sharing/${id}/revoke`),
   getPendingInvitations: () =>
-    api.get<ApiResponse<AccountSharing[]>>("/v1/account-sharing/pending"),
+    api.get<ApiResponse<AccountSharing[]>>("/account-sharing/pending"),
   getByAccount: (accountId: string) =>
     api.get<ApiResponse<AccountSharing[]>>(
-      `/v1/account-sharing/account/${accountId}`
+      `/account-sharing/account/${accountId}`
     ),
 };
 
-// Users API - Updated to use v1 endpoints
+// Users API - Uses centralized configuration
 export const usersAPI = {
-  getAll: (params?: any) =>
-    api.get<ApiResponse<User[]>>("/v1/users", { params }),
-  getById: (id: string) => api.get<ApiResponse<User>>(`/v1/users/${id}`),
-  create: (data: Partial<User>) =>
-    api.post<ApiResponse<User>>("/v1/users", data),
+  getAll: (params?: Record<string, unknown>) =>
+    api.get<ApiResponse<User[]>>("/users", { params }),
+  getById: (id: string) => api.get<ApiResponse<User>>(`/users/${id}`),
+  create: (data: Partial<User>) => api.post<ApiResponse<User>>("/users", data),
   update: (id: string, data: Partial<User>) =>
-    api.put<ApiResponse<User>>(`/v1/users/${id}`, data),
-  delete: (id: string) => api.delete<ApiResponse>(`/v1/users/${id}`),
-  getStats: () => api.get<ApiResponse>("/v1/users/stats/overview"),
+    api.put<ApiResponse<User>>(`/users/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse>(`/users/${id}`),
+  getStats: () => api.get<ApiResponse>("/users/stats/overview"),
+  changePassword: (
+    id: string,
+    passwords: {
+      currentPassword: string;
+      newPassword: string;
+    }
+  ) => api.post<ApiResponse>(`/users/${id}/change-password`, passwords),
 };
 
-// Multi-Application Integration API - Updated to use v1 endpoints
+// Automated Rights API - Uses centralized configuration
+export const automatedRightsAPI = {
+  checkAndCreate: (data: { userId: string; applicationId: string }) =>
+    api.post<ApiResponse>("/automated-rights/check-and-create", data),
+  checkPermissions: (data: { userId: string; applicationId: string }) =>
+    api.post<ApiResponse>("/automated-rights/check-permissions", data),
+  updatePermissions: (data: {
+    userId: string;
+    applicationId: string;
+    permissions: Permission[];
+  }) => api.put<ApiResponse>("/automated-rights/update-permissions", data),
+  getUserApplications: () =>
+    api.get<ApiResponse>("/automated-rights/user/applications"),
+};
+
+// Multi-Application Integration API - Uses centralized configuration
 export const appXAPI = {
-  checkUser: (data: any) => api.post<ApiResponse>("/v1/app-x/check-user", data),
-  validateRights: (data: any) =>
-    api.post<ApiResponse>("/v1/app-x/validate-rights", data),
+  checkUser: (data: Record<string, unknown>) =>
+    api.post<ApiResponse>(`/app-x/check-user`, data),
+  validateRights: (data: Record<string, unknown>) =>
+    api.post<ApiResponse>(`/app-x/validate-rights`, data),
   getUserPermissions: (userId: string, applicationId: string) =>
     api.get<ApiResponse>(
-      `/v1/app-x/user/${userId}/application/${applicationId}/permissions`
+      `/app-x/user/${userId}/application/${applicationId}/permissions`
     ),
   getUserApplications: (userId: string) =>
-    api.get<ApiResponse>(`/v1/app-x/user/${userId}/applications`),
-  bulkValidate: (data: any) =>
-    api.post<ApiResponse>("/v1/app-x/bulk-validate", data),
-  registerApplication: (data: any) =>
-    api.post<ApiResponse>("/v1/app-x/register-application", data),
-  getApplications: () => api.get<ApiResponse>("/v1/app-x/applications"),
-  health: () => api.get<ApiResponse>("/v1/app-x/health"),
+    api.get<ApiResponse>(`/app-x/user/${userId}/applications`),
+  bulkValidate: (data: Record<string, unknown>) =>
+    api.post<ApiResponse>(`/app-x/bulk-validate`, data),
+  registerApplication: (data: Record<string, unknown>) =>
+    api.post<ApiResponse>(`/app-x/register-application`, data),
+  getApplications: () => api.get<ApiResponse>(`/app-x/applications`),
+  health: () => api.get<ApiResponse>(`/app-x/health`),
 };
 
-// Health check - Updated to use v1 endpoint
+// Health check - Uses centralized configuration
 export const healthAPI = {
   check: () => api.get<ApiResponse>("/health"),
 };
+
+// Export the API configuration for easy access
+export { API_CONFIG } from "../config/api.js";
 
 export default api;

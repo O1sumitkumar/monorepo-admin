@@ -66,7 +66,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// API routes
+// API routes - Mount V1 routes with version prefix
+app.use("/api/v1", routes);
+
+// Legacy routes (for backward compatibility) - Mount without version prefix
 app.use("/api", routes);
 
 // 404 handler
@@ -87,6 +90,9 @@ const startServer = async () => {
       console.log(`📊 API available at http://localhost:${PORT}/api`);
       console.log(`🔍 Health check at http://localhost:${PORT}/api/health`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+      console.log(`📋 API Versions:`);
+      console.log(`   - V1: http://localhost:${PORT}/api/v1`);
+      console.log(`   - Legacy: http://localhost:${PORT}/api`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);

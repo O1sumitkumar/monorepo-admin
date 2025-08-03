@@ -169,25 +169,46 @@ const cleanupInvalidData = async () => {
   try {
     console.log("🧹 Cleaning up invalid data...");
 
-    // Drop any unique constraints on Rights collection
+    // Drop problematic indexes
     try {
-      await mongoose.connection.db.collection("rights").dropIndexes();
-      console.log("🗑️ Dropped all indexes on Rights collection");
+      await Application.collection.dropIndex("id_1");
+      console.log("✅ Dropped id_1 index from applications collection");
     } catch (error) {
-      console.log("ℹ️ No indexes to drop on Rights collection");
+      console.log("ℹ️ id_1 index not found or already dropped");
     }
 
-    // Remove any rights with invalid ObjectIds
-    const invalidRights = await Rights.find({
+    try {
+      await Rights.collection.dropIndex("id_1");
+      console.log("✅ Dropped id_1 index from rights collection");
+    } catch (error) {
+      console.log("ℹ️ id_1 index not found or already dropped");
+    }
+
+    try {
+      await Account.collection.dropIndex("id_1");
+      console.log("✅ Dropped id_1 index from accounts collection");
+    } catch (error) {
+      console.log("ℹ️ id_1 index not found or already dropped");
+    }
+
+    try {
+      await User.collection.dropIndex("id_1");
+      console.log("✅ Dropped id_1 index from users collection");
+    } catch (error) {
+      console.log("ℹ️ id_1 index not found or already dropped");
+    }
+
+    // Remove any documents with invalid ObjectId references
+    const rightsToDelete = await Rights.find({
       $or: [
         { applicationId: { $type: "string" } },
         { accountId: { $type: "string" } },
       ],
     });
 
-    if (invalidRights.length > 0) {
+    if (rightsToDelete.length > 0) {
       console.log(
-        `🗑️ Removing ${invalidRights.length} rights with invalid ObjectIds`
+        `🗑️ Removing ${rightsToDelete.length} invalid rights records`
       );
       await Rights.deleteMany({
         $or: [
@@ -197,37 +218,9 @@ const cleanupInvalidData = async () => {
       });
     }
 
-    // Remove any applications with invalid ObjectIds
-    const invalidApplications = await Application.find({
-      _id: { $type: "string" },
-    });
-
-    if (invalidApplications.length > 0) {
-      console.log(
-        `🗑️ Removing ${invalidApplications.length} applications with invalid ObjectIds`
-      );
-      await Application.deleteMany({
-        _id: { $type: "string" },
-      });
-    }
-
-    // Remove any accounts with invalid ObjectIds
-    const invalidAccounts = await Account.find({
-      _id: { $type: "string" },
-    });
-
-    if (invalidAccounts.length > 0) {
-      console.log(
-        `🗑️ Removing ${invalidAccounts.length} accounts with invalid ObjectIds`
-      );
-      await Account.deleteMany({
-        _id: { $type: "string" },
-      });
-    }
-
-    console.log("✅ Data cleanup completed");
+    console.log("✅ Cleanup completed");
   } catch (error) {
-    console.error("❌ Failed to cleanup data:", error);
+    console.error("❌ Error during cleanup:", error);
   }
 };
 
